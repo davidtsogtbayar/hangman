@@ -1,7 +1,7 @@
 const words = ["javascript", "hangman", "coding", "developer", "programming"];
-var selectedWord = "";
-var guessedLetters = [];
-var remainingAttempts = 6;
+let selectedWord = "";
+let guessedLetters = [];
+let remainingAttempts = 6;
 
 document.addEventListener("DOMContentLoaded", function () {
   setupGame();
@@ -23,13 +23,13 @@ function setupGame() {
 }
 
 function handleGuess() {
-  var guess = document.getElementById("guess-input").value.toLowerCase();
+  const guess = document.getElementById("guess-input").value.toLowerCase();
   document.getElementById("guess-input").value = "";
 
-  if (guess && guessedLetters.indexOf(guess) === -1) {
+  if (guess && !guessedLetters.includes(guess)) {
     guessedLetters.push(guess);
 
-    if (selectedWord.indexOf(guess) >= 0) {
+    if (selectedWord.includes(guess)) {
       updateWordDisplay();
     } else {
       remainingAttempts--;
@@ -39,58 +39,44 @@ function handleGuess() {
     }
 
     if (isGameOver()) {
-      alert("Game Over! The word was " + selectedWord);
-      setupGame();
+      setTimeout(() => alert("Game Over! The word was " + selectedWord), 100);
+      setTimeout(setupGame, 2000); // Restart the game after 2 seconds
     } else if (isWordGuessed()) {
-      alert("Congratulations! You guessed the word!");
-      setupGame();
+      setTimeout(() => alert("Congratulations! You guessed the word!"), 100);
+      setTimeout(setupGame, 2000); // Restart the game after 2 seconds
     }
   }
 }
 
 function updateWordDisplay() {
-  var display = "";
-  for (var i = 0; i < selectedWord.length; i++) {
-    var letter = selectedWord[i];
-    if (guessedLetters.indexOf(letter) >= 0) {
-      display += letter;
-    } else {
-      display += "_";
-    }
-    display += " ";
-  }
-
-  if (display.length > 0) {
-    display = display.split(" ").slice(0, -1).join(" ");
-  }
+  const display = selectedWord
+    .split("")
+    .map((letter) => (guessedLetters.includes(letter) ? letter : "_"))
+    .join(" ");
   document.getElementById("word-container").textContent = display;
 }
 
 function updateHangmanImage() {
-  var hangmanStages = [
-    "Hangman stage 0",
-    "Hangman stage 1",
-    "Hangman stage 2",
-    "Hangman stage 3",
-    "Hangman stage 4",
-    "Hangman stage 5",
-    "Hangman stage 6",
+  const hangmanStages = [
+    "./images/stage0.svg",
+    "./images/stage1.svg",
+    "./images/stage2.svg",
+    "./images/stage3.svg",
+    "./images/stage4.svg",
+    "./images/stage5.svg",
+    "./images/stage6.svg",
   ];
 
-  document.getElementById("hangman-image").textContent =
+  document.getElementById("hangman-image").src =
     hangmanStages[6 - remainingAttempts];
 }
 
 function isGameOver() {
-  return remainingAttempts - 1 < 0;
+  return remainingAttempts <= 0;
 }
 
 function isWordGuessed() {
-  for (var i = 0; i < selectedWord.length; i++) {
-    var letter = selectedWord[i];
-    if (guessedLetters.indexOf(letter) === -1) {
-      return false;
-    }
-  }
-  return true;
+  return selectedWord
+    .split("")
+    .every((letter) => guessedLetters.includes(letter));
 }

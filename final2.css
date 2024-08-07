@@ -21,6 +21,11 @@ body {
   margin-bottom: 20px;
 }
 
+#hangman-image {
+  height: 150px;
+  width: 150px;
+}
+
 .hangman-container {
   margin-bottom: 20px;
 }
